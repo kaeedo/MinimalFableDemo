@@ -2,7 +2,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors>FS0025</WarningsAsErrors>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Model/Model.fs" />
+    <Compile Include="Message/Message.fs" />
+    <Compile Include="Command/Command.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>

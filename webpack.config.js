@@ -104,6 +104,7 @@ module.exports = {
         contentBase: CONFIG.assetsDir,
         port: CONFIG.devServerPort,
         proxy: CONFIG.devServerProxy,
+        historyApiFallback: true,
         hot: true,
         inline: true
     },
@@ -117,14 +118,14 @@ module.exports = {
                 test: /\.fs(x|proj)?$/,
                 use: "fable-loader"
             },
-            {
+            /* {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader'/* ,
-                    options: CONFIG.babel */
+                    loader: 'babel-loader' ,
+                    options: CONFIG.babel
                 },
-            },
+            }, */
             {
                 test: /\.(sass|scss|css)$/,
                 use: [

@@ -1,43 +1,35 @@
 module App
 
-(**
- The famous Increment/Decrement ported from Elm.
- You can find more info about Emish architecture and samples at https://elmish.github.io/
-*)
-
 open Elmish
 open Elmish.React
+open Fable.Import
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 
-// MODEL
+open Model
+open Message
+open Command
 
-type Model = int
+let init(): Model.AppModel =
+    { InputValue = ""
+      Todos = [] }
 
-type Msg =
-| Increment
-| Decrement
 
-let init() : Model = 0
+let view (model: Model.AppModel) dispatch =
+    let addTodo _ =
+        dispatch <| Message.Create
 
-// UPDATE
+    let inputOnChange (e: React.FormEvent) =
+        let text = e.Value
+        dispatch <| Message.Write text
 
-let update (msg:Msg) (model:Model) =
-    match msg with
-    | Increment -> model + 2
-    | Decrement -> model - 2
+    div []
+        [ div []
+              [ input [ Value model.InputValue; OnChange inputOnChange ]
+                button [OnClick addTodo ] [ str "Add Todo" ] ]
+          div [] [ str (string model) ] ]
 
-// VIEW (rendered with React)
-
-let view model dispatch =
-
-  div []
-      [ button [ OnClick (fun _ -> dispatch Increment) ] [ str "++" ]
-        div [] [ str (string model) ]
-        button [ OnClick (fun _ -> dispatch Decrement) ] [ str "--" ] ]
-
-// App
-Program.mkSimple init update view
+Program.mkSimple init Command.update view
 |> Program.withReact "elmish-app"
 |> Program.withConsoleTrace
 |> Program.run
