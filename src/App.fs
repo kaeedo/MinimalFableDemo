@@ -25,9 +25,16 @@ let view (model: Model.AppModel) dispatch =
 
     div []
         [ div []
-              [ input [ Value model.InputValue; OnChange inputOnChange ]
-                button [OnClick addTodo ] [ str "Add Todo" ] ]
-          div [] [ str (string model) ] ]
+            [ input [ Value model.InputValue; OnChange inputOnChange ]
+              button [OnClick addTodo ] [ str "Add Todo" ] ]
+          hr []
+          div []
+            (model.Todos
+            |> List.map (fun t ->
+                let idString = t.Id.ToString()
+                div [ Key idString ]
+                    [ input [ Type "checkbox"; Id idString ]; label [ HtmlFor idString ] [ str t.Text ] ]
+            )) ]
 
 Program.mkSimple init Command.update view
 |> Program.withReact "elmish-app"
