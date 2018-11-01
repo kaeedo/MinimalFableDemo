@@ -1,5 +1,7 @@
 namespace Model
 
+open Fable.Core
+
 module Model =
     type Todo =
         { Id: int
