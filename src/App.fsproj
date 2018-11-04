@@ -4,16 +4,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   <ItemGroup>
-    <Compile Include="Models/Model.fs" />
-    <Compile Include="Messages/Message.fs" />
-    <Compile Include="Commands/Command.fs" />
-    <Compile Include="Pages/Main.fs" />
+    <Compile Include="Loader.fs" />
+    <Compile Include="Counter.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fable.Core" Version="2.0.0-beta-001" />
-    <PackageReference Include="Fable.React" Version="4.0.0-alpha-001" />
-    <PackageReference Include="Fable.Elmish.React" Version="1.0.3" />
-    <DotNetCliToolReference Include="dotnet-fable" Version="2.0.0-beta-001" />
+    <PackageReference Include="Fable.Core" Version="2.0.1" />
+    <PackageReference Include="Fable.Elmish.Browser" Version="2.0.0" />
+    <PackageReference Include="Fable.React" Version="4.1.1 " />
+    <PackageReference Include="Fable.Elmish.React" Version="2.0.0" />
+    <DotNetCliToolReference Include="dotnet-fable" Version="2.0.8" />
   </ItemGroup>
 </Project>
