@@ -2,6 +2,8 @@ module App
 
 open Elmish
 open Elmish.React
+open Elmish.Browser.Navigation
+open Elmish.Browser.UrlParser
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 
@@ -9,47 +11,45 @@ type Page =
 | Counter of Counter.State
 | Loader of Loader.State
 
-type State = CurrentPage of Page
-
-type Url = Url of string
+type Model =
+    { CurrentPage: Page
+      Query: string }
 
 type Message =
 | CounterMessage of Counter.Message
 | LoaderMessage of Loader.Message
-| NavigateTo of string
 
+let urlUpdate (result: Option<Router.Page>) model =
+    match result with
+    | None ->
+        model, Navigation.modifyUrl "#"
+    | Some (Router.Page.Counter startValue) ->
+        let initialState, initialCmd = Counter.init startValue
+        let nextState = { CurrentPage = (Page.Counter initialState); Query = startValue.ToString() }
+        let nextCmd = Cmd.map CounterMessage initialCmd
+        nextState, nextCmd
+    | Some (Router.Page.Loader) ->
+        let initialState, initialCmd = Loader.init()
+        let nextState = { CurrentPage = Page.Loader initialState; Query = "" }
+        let nextCmd = Cmd.map LoaderMessage initialCmd
+        nextState, nextCmd
 
-let init() =
-    let initialCounterState, initialCounterCmd = Counter.init()
-    let inisitalState = CurrentPage (Page.Counter initialCounterState)
-    let initialCmd = Cmd.map CounterMessage initialCounterCmd
-    inisitalState, initialCmd
+let init result =
+    let initialState, _ = Counter.init 0
+    urlUpdate result { CurrentPage = (Page.Counter initialState); Query = "0"}
 
 let update msg state =
-    match state, msg with
-    | CurrentPage (Page.Counter counterState), CounterMessage counterMessage ->
-        let nextCounterState, nextCounterCmd = Counter.update counterMessage counterState
-        let nextState = CurrentPage (Page.Counter nextCounterState)
+    match msg, state.CurrentPage with
+    | CounterMessage counterMessage, Page.Counter subState ->
+        let nextCounterState, nextCounterCmd = Counter.update counterMessage subState
+        let nextState = { state with CurrentPage = (Page.Counter nextCounterState) }
         nextState, Cmd.map CounterMessage nextCounterCmd
-    | CurrentPage (Page.Loader loaderState), LoaderMessage loaderMessage ->
+    | LoaderMessage loaderMessage, Page.Loader loaderState ->
         let nextLoaderState, nextLoaderCmd = Loader.update loaderMessage loaderState
-        let nextState = CurrentPage (Page.Loader nextLoaderState)
+        let nextState = { state with CurrentPage = (Page.Loader nextLoaderState) }
         nextState, Cmd.map LoaderMessage nextLoaderCmd
-    | _, NavigateTo "/counter" ->
-        let initialCounterState, initialCounterCmd = Counter.init()
-        let nextState = CurrentPage (Page.Counter initialCounterState)
-        let nextCmd = Cmd.map CounterMessage initialCounterCmd
-        nextState, nextCmd
-    | _, NavigateTo "/loader" ->
-        let initialLoaderState, initialLoaderCmd = Loader.init()
-        let nextState = CurrentPage (Page.Loader initialLoaderState)
-        let nextCmd = Cmd.map LoaderMessage initialLoaderCmd
-        nextState, nextCmd
-    | _, _ ->
-        let initialCounterState, initialCounterCmd = Counter.init()
-        let nextState = CurrentPage (Page.Counter initialCounterState)
-        let nextCmd = Cmd.map CounterMessage initialCounterCmd
-        nextState, nextCmd
+    | _ ->
+        state, Cmd.none
 
 let divider =
     div [ Style [ MarginTop 20; MarginBottom 20 ] ] [ ]
@@ -61,41 +61,32 @@ let spinner =
     ]
 
 let render state dispatch =
-    let currentUrl =
-        match state with
-        | CurrentPage (Page.Counter _ ) -> "/counter"
-        | CurrentPage (Page.Loader _) -> "/loader"
-
-    let navItem nextUrl title =
-        let notActive = currentUrl <> nextUrl
-        let navLinkClass = if notActive then "nav-link" else "nav-link active"
+    let navItem title =
         li [ ClassName "nav-item" ] [
-            a [ ClassName navLinkClass
-                Href "#"
-                OnClick (fun _ -> dispatch (NavigateTo nextUrl)) ]
+            a [ Href (sprintf "#/%s" title) ]
               [ str title ]
         ]
 
     let currentPage =
         match state with
-        | CurrentPage (Page.Counter counterState) ->
+        | { CurrentPage = (Page.Counter counterState) } ->
             Counter.view counterState (CounterMessage >> dispatch)
-        | CurrentPage (Page.Loader loaderState) ->
+        | { CurrentPage = (Page.Loader loaderState) } ->
             Loader.view loaderState (LoaderMessage >> dispatch)
 
     div [ Style [ Padding 20 ] ] [
         divider
 
         ul [ ClassName "nav nav-tabs" ] [
-            navItem "/counter" "Counter"
-            navItem "/loader" "Loader"
+            navItem "counter"
+            navItem "loader"
         ]
 
         divider
         currentPage
     ]
 
-
 Program.mkProgram init update render
+|> Program.toNavigable (parseHash Router.parser) urlUpdate
 |> Program.withReact "elmish-app"
 |> Program.run

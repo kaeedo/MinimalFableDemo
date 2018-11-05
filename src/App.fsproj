@@ -4,6 +4,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   <ItemGroup>
+    <Compile Include="Router.fs" />
     <Compile Include="Loader.fs" />
     <Compile Include="Counter.fs" />
     <Compile Include="App.fs" />

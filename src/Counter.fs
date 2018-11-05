@@ -10,7 +10,7 @@ type Message =
 | Increment
 | Decrement
 
-let init() = { Count = 0 }, Cmd.none
+let init startValue = { Count = startValue }, Cmd.none
 
 let update message state =
     match message with
