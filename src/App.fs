@@ -78,7 +78,7 @@ let render state dispatch =
         divider
 
         ul [ ClassName "nav nav-tabs" ] [
-            navItem "counter"
+            navItem "counter/3"
             navItem "loader"
         ]
 
