@@ -95,6 +95,10 @@ module.exports = {
             new webpack.HotModuleReplacementPlugin(),
         ]),
     resolve: {
+        alias: {
+            react: 'preact-compat',
+            'react-dom': 'preact-compat'
+        },
         // See https://github.com/fable-compiler/Fable/issues/1490
         symlinks: false
     },
