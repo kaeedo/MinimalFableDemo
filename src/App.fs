@@ -6,14 +6,14 @@ open Elmish.Browser.Navigation
 open Elmish.Browser.UrlParser
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open Loader
 
 type Page =
 | Counter of Counter.State
 | Loader of Loader.State
 
 type Model =
-    { CurrentPage: Page
-      Query: string }
+    { CurrentPage: Page }
 
 type Message =
 | CounterMessage of Counter.Message
@@ -22,21 +22,21 @@ type Message =
 let urlUpdate (result: Option<Router.Page>) model =
     match result with
     | None ->
-        model, Navigation.modifyUrl "#"
+        model, Cmd.none
     | Some (Router.Page.Counter startValue) ->
         let initialState, initialCmd = Counter.init startValue
-        let nextState = { CurrentPage = (Page.Counter initialState); Query = startValue.ToString() }
+        let nextState = { CurrentPage = (Page.Counter initialState) }
         let nextCmd = Cmd.map CounterMessage initialCmd
         nextState, nextCmd
     | Some (Router.Page.Loader) ->
         let initialState, initialCmd = Loader.init()
-        let nextState = { CurrentPage = Page.Loader initialState; Query = "" }
+        let nextState = { CurrentPage = Page.Loader initialState }
         let nextCmd = Cmd.map LoaderMessage initialCmd
         nextState, nextCmd
 
 let init result =
     let initialState, _ = Counter.init 0
-    urlUpdate result { CurrentPage = (Page.Counter initialState); Query = "0"}
+    urlUpdate result { CurrentPage = (Page.Counter initialState) }
 
 let update msg state =
     match msg, state.CurrentPage with
@@ -49,7 +49,7 @@ let update msg state =
         let nextState = { state with CurrentPage = (Page.Loader nextLoaderState) }
         nextState, Cmd.map LoaderMessage nextLoaderCmd
     | _ ->
-        state, Cmd.none
+        init None
 
 let divider =
     div [ Style [ MarginTop 20; MarginBottom 20 ] ] [ ]
@@ -72,7 +72,11 @@ let render state dispatch =
         | { CurrentPage = (Page.Counter counterState) } ->
             Counter.view counterState (CounterMessage >> dispatch)
         | { CurrentPage = (Page.Loader loaderState) } ->
-            Loader.view loaderState (LoaderMessage >> dispatch)
+            let loaderProps =
+                { loaderState with
+                    Dispatch = LoaderMessage >> dispatch }
+            let inline loader props = ofType<Loader, _, _> props
+            loader loaderProps []
 
     div [ Style [ Padding 20 ] ] [
         divider

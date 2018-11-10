@@ -2,8 +2,10 @@ module Loader
 
 open Elmish
 open Elmish.React
+open Fable.Import.React
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open Fable.Helpers.React.ReactiveComponents
 
 module Cmd =
     let afterTimeout n (msg: 't) : Cmd<'t> =
@@ -20,14 +22,17 @@ type LoaderState =
 | Loading
 | Loaded of string
 
-type State = { Loader: LoaderState }
-
 type Message =
 | StartLoading
 | FinishedLoading of string
 | ResetLoader
 
-let init() = { Loader = LoaderState.Initial }, Cmd.none
+type State =
+    { Loader: LoaderState
+      Message: Message
+      Dispatch: Message -> unit }
+
+let init() = { Loader = LoaderState.Initial; Message = StartLoading; Dispatch = fun _ -> () }, Cmd.none
 
 let update message state =
     match message with
@@ -42,17 +47,27 @@ let update message state =
         let nextState = { state with Loader = LoaderState.Initial }
         nextState, Cmd.none
 
-let startLoadingHandler dispatch _ = dispatch StartLoading
+type Loader(props) =
+    inherit Component<State, obj>(props)
 
-let resetHandler dispatch _ = dispatch ResetLoader
+    let dispatch = base.props.Dispatch
 
-let view state dispatch =
-    match state.Loader with
-    | Initial ->
-         button [ OnClick <| startLoadingHandler dispatch ] [ str "Start Loading" ]
-    | Loading -> h3 [] [ str "LOADING..." ]
-    | Loaded data ->
-        div [ ] [
-            h3 [ ] [ str data ]
-            button [ OnClick <| resetHandler dispatch ] [ str "Start Loading" ]
-        ]
+    let startLoadingHandler dispatch _ = dispatch StartLoading
+
+    let resetHandler dispatch _ = dispatch ResetLoader
+
+    override this.componentDidMount() =
+        dispatch StartLoading
+
+    override this.render() =
+        let model = this.props.Loader
+
+        match model with
+        | Initial ->
+             button [ OnClick <| startLoadingHandler dispatch ] [ str "Start Loading" ]
+        | Loading -> h3 [] [ str "LOADING..." ]
+        | Loaded data ->
+            div [ ] [
+                h3 [ ] [ str data ]
+                button [ OnClick <| resetHandler dispatch ] [ str "Reset" ]
+            ]
