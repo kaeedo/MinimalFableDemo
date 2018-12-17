@@ -1,6 +1,7 @@
-# Minimal Fable Demo using Preact and Preact-Compat
+# Minimal Fable Demo using React
 
 The master branch is the finished version with Preact and the aliases in the webpack config set.
+This branch is the original, before using Preact.
 To run locally, simply issue the following commands in the root after cloning
 
 `npm install`
