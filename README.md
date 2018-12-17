@@ -11,7 +11,7 @@ To run locally, simply issue the following commands in the root after cloning
 
 ---
 
-To build a production bundle, run `npm run build` and then use something like [dotnet serve](https://github.com/natemcmaster/dotnet-serve) to serve the bundle
+To build a production bundle, run `npm run build` and then use something like [dotnet serve](https://github.com/natemcmaster/dotnet-serve) to serve the bundle from the `deploy` directory
 
 ---
 
