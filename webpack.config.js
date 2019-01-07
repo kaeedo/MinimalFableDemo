@@ -9,7 +9,6 @@ const CONFIG = {
     fsharpEntry: "./src/App.fsproj",
     cssEntry: "./src/style.scss",
     outputDir: "./deploy",
-    assetsDir: "./public",
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls
     // to a external API server. See https://webpack.js.org/configuration/dev-server/#devserver-proxy
@@ -89,7 +88,6 @@ module.exports = {
     plugins: isProduction ?
         commonPlugins.concat([
             new MiniCssExtractPlugin({ filename: 'style.css' }),
-            new CopyWebpackPlugin([{ from: CONFIG.assetsDir }]),
         ])
         : commonPlugins.concat([
             new webpack.HotModuleReplacementPlugin(),
@@ -105,7 +103,6 @@ module.exports = {
     // Configuration for webpack-dev-server
     devServer: {
         publicPath: "/",
-        contentBase: CONFIG.assetsDir,
         port: CONFIG.devServerPort,
         proxy: CONFIG.devServerProxy,
         historyApiFallback: true,
