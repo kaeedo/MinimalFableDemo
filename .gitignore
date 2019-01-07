@@ -1,3 +1,7 @@
 deploy/
 .ionide/symbolCache.db
 .ionide/symbolCache.db-journal
+node_modules/
+.fable/
+src/obj
+src/bin
