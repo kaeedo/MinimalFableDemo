@@ -19,7 +19,7 @@
     "fable-compiler": "2.1.4",
     "fable-loader": "2.1.0",
     "file-loader": "2.0.0",
-    "html-webpack-plugin": "3.2.0",
+    "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "0.4.4",
     "node-sass": "7.0.0",
     "sass-loader": "7.1.0",
