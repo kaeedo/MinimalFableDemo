@@ -14,7 +14,7 @@
   "devDependencies": {
     "@babel/core": "7.2.0",
     "babel-loader": "8.0.4",
-    "copy-webpack-plugin": "4.5.4",
+    "copy-webpack-plugin": "11.0.0",
     "css-loader": "6.7.2",
     "fable-compiler": "2.1.4",
     "fable-loader": "2.1.0",
@@ -24,7 +24,7 @@
     "node-sass": "7.0.3",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
-    "webpack": "4.23.1",
+    "webpack": "4.46.0",
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "4.11.1"
   },
